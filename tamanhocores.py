@@ -1,4 +1,3 @@
-
 #definindo cores:
 CORES ={
 'preto': (0,0,0),
@@ -11,3 +10,4 @@ CORES ={
 'branco': (255, 255, 255),
 'cinza': (130, 130, 130)
 }
+
