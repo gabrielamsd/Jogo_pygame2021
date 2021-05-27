@@ -11,6 +11,7 @@ class Peca(pygame.sprite.Sprite):
         3: [[5, 6, 7, 9], [2, 6, 10, 11], [1, 2, 6, 10], [3, 5, 6, 7]],
         4: [[1, 4, 5, 9], [4, 5, 6, 9], [1, 4, 5, 6], [1, 5, 6, 9]]
     }    
+
     pos_linha = 20 #posição da linha em que a peça começa
     pos_coluna = 1 #posição da coluna em que a peça começa
     rot = 0 #rotaão da peça, começa do zero
