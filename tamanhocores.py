@@ -11,3 +11,4 @@ CORES ={
 'cinza': (130, 130, 130)
 }
 TAM_BLOCO = 40
+
