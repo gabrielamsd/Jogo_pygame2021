@@ -93,7 +93,7 @@ class Tabuleiro(pygame.sprite.Sprite):
     situação = 'start'
     tabuleiro = []
     peças = []
-
+    tab = pygame.image.load('tabuleiro.png').convert_alpha()
     def __init__(self,altura,largura): #Função para criar um campo com tamanho altura x largura
         self.altura = altura 
         self.largura = largura
@@ -146,13 +146,11 @@ while jogando: # formato do handout
             if event.key == pygame.K_d:
                 ultima_peca.deslocamento = 0
         
-
     if not ultima_peca.caindo:
         all_blocks.add(ultima_peca)
         ultima_peca = Peca(tabuleiro, tela)
         all_sprites.add(ultima_peca)
         
-    
     all_sprites.update()
     ultima_peca.rect.y += TAM_BLOCO
   
@@ -162,8 +160,6 @@ while jogando: # formato do handout
         ultima_peca.caindo = False
     ultima_peca.rect.y -= TAM_BLOCO
 
-    tela.fill(CORES['preto'])
+    tela.fill(CORES['cinza'])
     all_sprites.draw(tela)
-    
-    
     pygame.display.update()
