@@ -10,6 +10,7 @@ pygame.init() # começa o jogo (comando do próprio pygame)
 pygame.mixer.init()
 dimensão = (700, 700) # testamos algumas combinações, mas, por hora, essa é a mais interessante
 tela = pygame.display.set_mode(dimensão)
+menu = pygame.image.load('teste.png').convert()#corrigir
 
 # vamos começar criando as imagens das peças que eu quero usar para a composição do jogo.
 # vamos usar, inicialmente, os formatos das peças do jogo original
@@ -160,6 +161,7 @@ while jogando: # formato do handout
         ultima_peca.caindo = False
     ultima_peca.rect.y -= TAM_BLOCO
 
-    tela.fill(CORES['cinza'])
+    tela.fill(CORES['azul'])
+    tela.blit(menu, (0,0))
     all_sprites.draw(tela)
     pygame.display.update()
