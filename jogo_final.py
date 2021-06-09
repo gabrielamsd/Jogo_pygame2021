@@ -10,8 +10,13 @@ pygame.mixer.init()
 dimensão = (500, 600)
 tela = pygame.display.set_mode(dimensão)
 pygame.display.set_caption("Tetris")
+
+inicio_img = pygame.image.load(path.join('telainicio.png'))
+
 # enquanto estiver jogando, ele vai rodar no loop
+começo = True
 jogando = True 
+#preencher a tela com a tela inicial
 clock = pygame.time.Clock()
 FPS = 40
 matriz = 4
@@ -23,6 +28,27 @@ b = tabuleiro.amp - 1
 c = tabuleiro.amp
 d = tabuleiro.x
 aa = tabuleiro.y
+deixa_cair = False
+tela_inicio = False
+
+pygame.mixer.music.load((path.join('musica_tetris.mp3')))
+pygame.mixer.music.play(loops=-1)
+pygame.mixer.music.set_volume(0.2)
+
+while tela_inicio == False:
+    for event in pygame.event.get():     
+        if event.type == pygame.QUIT:
+            tela_inicio = True
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                tela_inicio = True
+ 
+    tela.fill(CORES['preto'])
+    inicio = pygame.image.load('telainicio.png')
+    inicio = pygame.transform.scale(inicio, (500, 600))
+    tela.blit(inicio,(0,0))
+    pygame.display.flip()
+
 
 while jogando:
     if tabuleiro.peca is None: # cria uma peça quando não existe nenhuma que não esteja ja colidida
@@ -34,6 +60,10 @@ while jogando:
     if pontos % (FPS // tabuleiro.padrão // 2) == 0: # vi um indiano no youtube fazendo isso numa réplica de mario. dessa forma o fps não modifica a velocidade de caimento das peças, só a velocidade de reação ao clique
         if tabuleiro.state == "start": # funcionou, porém não entendi
             tabuleiro.cai()
+    if deixa_cair:
+        if tabuleiro.state == "start": # funcionou, porém não entendi
+            tabuleiro.cai()
+
 
     #colore a tela (a cor é opcional, mas preto é a que ficou esteticamente mais bonita)
     tela.fill(CORES['preto']) 
@@ -46,11 +76,11 @@ while jogando:
             if event.key == pygame.K_w:
                 tabuleiro.rodar()
             if event.key == pygame.K_s:
-                tabuleiro.rodar()
+                deixa_cair = True
             if event.key == pygame.K_UP:
                 tabuleiro.rodar()
             if event.key == pygame.K_DOWN:
-                tabuleiro.rodar()
+                deixa_cair = True
             if event.key == pygame.K_a:
                 tabuleiro.deslocamento(-1)
             if event.key == pygame.K_d:
@@ -59,6 +89,12 @@ while jogando:
                 tabuleiro.deslocamento(-1)
             if event.key == pygame.K_RIGHT:
                 tabuleiro.deslocamento(1)
+        if event.type == pygame.KEYUP:
+            if event.key == pygame.K_s:
+                deixa_cair = False
+            if event.key == pygame.K_DOWN:
+                deixa_cair = False
+
 
     # desenhando a grade quadriculada que é o espaço de jogo
     for i in range(tabuleiro.altura):
@@ -76,28 +112,48 @@ while jogando:
 
     # escrevendo na tela:
     # determinando os formatos da fonte e tamanho de cada texto utilizado
-    formato = pygame.font.SysFont('Arial', 20, True, False)
+    formato = pygame.font.SysFont('Arial', 35, True, False)
     tit = pygame.font.SysFont('Arial', 40, True, False)
     subtexto = pygame.font.SysFont('Arial', 11, True, False)
+    subtexto1 = pygame.font.SysFont('Arial', 15, True, False)
 
     # criando as posições onde cada coisa estará escrita
     pos_titulo = [100, 10]
-    pos_ponto = [350, 300]
-    pos_go = [335, 350] #posição de onde aparece mensagem indicando game over
+    pos_ponto = [310, 10]
+    pos_go = [300, 260] #posição de onde aparece mensagem indicando game over
     pos_nomes = [230, 580]
-    # colocar as instruções na lateral !!!!!!!
+    pos_i1 = [300, 110]
+    pos_i2 = [300, 125]
+    pos_i3 = [300, 140]
+    pos_i4 = [300, 155]
+    pos_i5 = [300, 170]
+    pos_i6 = [300, 185]
 
     # escolhendo o que será escrito
     # frases como autoras do jogo, modo de jogar (quais peças apertar), pontuação e avisar quando a pessoa perder
     titulo = tit.render('TETRIS', True, CORES['laranja'])
     texto1 = formato.render('Pontos: ' + str(tabuleiro.pontos), True, CORES['roxo'])
-    texto2 = formato.render('Você perdeu!', True, CORES['rosa'])
-    texto3 = subtexto.render('Jogo feito por Gabriela e Kailany', True, CORES['azul']) # devemos colocar sobrenomes?
+    texto2 = formato.render('Gameover!', True, CORES['rosa'])
+    texto3 = subtexto.render('Jogo feito por Gabriela Duarte e Kailany Kellen', True, CORES['azul']) # devemos colocar sobrenomes?
+    textoi1 = subtexto1.render('Para mover a peça', True, CORES['rosinha'])
+    textoi2 = subtexto1.render('lateralmente aperte', True, CORES['rosinha'])
+    textoi3 = subtexto1.render('A e D ou ← e →', True, CORES['rosinha'])
+    textoi4 = subtexto1.render('Para girar use as', True, CORES['rosinha'])
+    textoi5 = subtexto1.render('teclas W ou ↑ ', True, CORES['rosinha'])
+    textoi6 = subtexto1.render('Dica: S e ↓ aceleram a queda', True, CORES['rosinha'])
     
+
     # escrevendo na tela
     tela.blit(titulo, pos_titulo)
     tela.blit(texto3, pos_nomes)
     tela.blit(texto1, pos_ponto)
+    tela.blit(textoi1, pos_i1)
+    tela.blit(textoi2, pos_i2)
+    tela.blit(textoi3, pos_i3)
+    tela.blit(textoi4, pos_i4)
+    tela.blit(textoi5, pos_i5)
+    tela.blit(textoi6, pos_i6)
+
     if tabuleiro.state == 'fim de jogo':
         tela.blit(texto2, pos_go) 
 
