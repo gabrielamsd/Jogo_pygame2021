@@ -47,10 +47,18 @@ while jogando:
                 tabuleiro.rodar()
             if event.key == pygame.K_s:
                 tabuleiro.rodar()
+            if event.key == pygame.K_UP:
+                tabuleiro.rodar()
+            if event.key == pygame.K_DOWN:
+                tabuleiro.rodar()
             if event.key == pygame.K_a:
                 tabuleiro.deslocamento(-1)
             if event.key == pygame.K_d:
-                tabuleiro.deslocamento(1) 
+                tabuleiro.deslocamento(1)
+            if event.key == pygame.K_LEFT:
+                tabuleiro.deslocamento(-1)
+            if event.key == pygame.K_RIGHT:
+                tabuleiro.deslocamento(1)
 
     # desenhando a grade quadriculada que é o espaço de jogo
     for i in range(tabuleiro.altura):
