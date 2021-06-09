@@ -162,7 +162,7 @@ class Tabuleiro:
 pygame.display.set_caption("Tetris")
 jogando = True # enquanto estiver jogando, ele vai rodar no loop
 clock = pygame.time.Clock()
-FPS = 40
+FPS = 10
 matriz = 4
 tabuleiro = Tabuleiro(25, 12)
 pontos = 0
