@@ -1,167 +1,106 @@
-# dúvidas:
-# as peças só vao para a lateral quando passam de uma certa altura do tabuleiro e continuam indo depois de encostar no chão
-# tamanho do tabuleiro e as dimensões dele na tela para saber o espaço de jogo
-# não conseguimos fazer as colisões
-# limites e bordas para o tabuleiro 
 import pygame
 import random
 from tamanhocores import *
-pygame.init() # começa o jogo (comando do próprio pygame)
-pygame.mixer.init()
-dimensão = (700, 700) # testamos algumas combinações, mas, por hora, essa é a mais interessante
-tela = pygame.display.set_mode(dimensão)
-menu = pygame.image.load('grade.png').convert()#corrigir
+from pecas import *
+class Tabuleiro:
+    level = 2
+    pontos = 0
+    state = "start"
+    campo = []
+    # as matrizes criadoras dos elementos peça são 4x4. caso queiramos mudar o tamanho, podemos alterar diretamente aqui ao inves de usar 4 sempre
+    matriz = 4 
+    x = 50
+    y = 60
+    amp = 20
+    peca = None
 
-# vamos começar criando as imagens das peças que eu quero usar para a composição do jogo.
-# vamos usar, inicialmente, os formatos das peças do jogo original
-pecas = {
-    'red': pygame.image.load('red.png').convert_alpha(),
-    'blue': pygame.image.load('blue.png').convert_alpha(),
-    'blue2': pygame.image.load('blue2.png').convert_alpha(),
-    'blue3': pygame.image.load('blue3.png').convert_alpha(),
-    'blue4': pygame.image.load('blue4.png').convert_alpha(),
-    'purple': pygame.image.load('purple.png').convert_alpha(),
-    'purple2': pygame.image.load('purple2.png').convert_alpha(),
-    'purple3': pygame.image.load('purple3.png').convert_alpha(),
-    'purple4': pygame.image.load('purple4.png').convert_alpha(),
-    'yellow': pygame.image.load('yellow.png').convert_alpha(),
-    'yellow2': pygame.image.load('yellow2.png').convert_alpha(),
-    'yellow3': pygame.image.load('yellow3.png').convert_alpha(),
-    'yellow4': pygame.image.load('yellow4.png').convert_alpha(),
-    'green': pygame.image.load('green.png').convert_alpha(),
-    'green2': pygame.image.load('green2.png').convert_alpha(),
-    'pink': pygame.image.load('pink.png').convert_alpha(),
-    'pink2': pygame.image.load('pink2.png').convert_alpha(),
-    'cyan': pygame.image.load('cyan.png').convert_alpha(),
-    
-}
-# para isso, será criada uma classe de peças
-class Peca(pygame.sprite.Sprite):
-    types = {
-        1: [pecas['pink'], pecas['pink2']],
-        2: [pecas['blue'],pecas['blue2'],pecas['blue3'],pecas['blue4']],
-        3: [pecas['purple'], pecas['purple2'], pecas['purple3'], pecas['purple4']],
-        4: [pecas['yellow'], pecas['yellow2'], pecas['yellow3'], pecas['yellow4']],
-        5: [pecas['red']],
-        6: [pecas['green'], pecas['green2']],
-        7: [pecas['cyan']]
-    } 
-    pos_linha = 20 #posição da linha em que a peça começa
-    pos_coluna = 1 #posição da coluna em que a peça começa
-    rot = 0 #rotaão da peça, começa do zero
-    type = []
-    def __init__(self, tabuleiro, tela):
-        pygame.sprite.Sprite.__init__(self)
-        self.tela = tela
-        self.tabuleiro = tabuleiro
-        self.escolhida = random.choice(list(self.types.values()))
-        self.giro = 0 # indica o giro (+1 para direita, -1 para a esquerda) e ve a posição da peça na lista
-        self.image = self.escolhida[self.giro]
-        self.mask = pygame.mask.from_surface(self.image)
-        self.pos_linha = tabuleiro.altura
-        self.pos_coluna = tabuleiro.largura/2
-        self.rect = self.image.get_rect()
-        self.rect.x = self.pos_coluna * 20
-        self.rect.y = 0
-        self.caindo = True
-        self.deslocamento = 0
-    def girar(self, orient):
-        self.giro += orient
-        self.giro = self.giro%len(self.escolhida) #para dar a volta e percorrer a lista toda
-        
-    def update(self):
-        self.caindo = self.caindo and self.pos_linha > 0
-        if self.caindo:
-            self.pos_linha -= 1  
-            self.rect.y += TAM_BLOCO
-            self.image = self.escolhida[self.giro] # pegar o elemento, no indice específico do giro, dentro da lista de possiveis posições para a peça em questão.
-            self.rect.x += self.deslocamento
-'''
-        if self.rect.right > self.pos_coluna:
-            self.rect.right = self.pos_coluna
-            if self.rect.left < 0:
-                self.rect.left = 0
-            if self.rect.top < 0:
-                self.rect.top = 0 
-            if self.rect.bottom > self.pos_linha:
-                self.rect.bottom = self.pos_linha
-'''
-class Tabuleiro(pygame.sprite.Sprite):
-    #nível = #começa definindo o nível do jogo que aparece na tela, pode ser um único, só determina a dificuldade do jogo
-    #pontuação = #eu diria que é legal começar do zero
-    altura = 20
-    largura = 10
-    situação = 'start'
-    tabuleiro = []
-    peças = []
-    tab = pygame.image.load('tabuleiro.png').convert_alpha()
-    def __init__(self,altura,largura): #Função para criar um campo com tamanho altura x largura
-        self.altura = altura 
+    def __init__(self, altura, largura):
+        self.altura = altura
         self.largura = largura
+        self.campo = []
+        self.pontos = 0
+        self.state = "start"
         for i in range(altura):
-            cria_linha = []
+            mais_linha = []
             for e in range(largura):
-                cria_linha.append(0)
-            self.tabuleiro.append(cria_linha)
+                mais_linha.append(0)
+            self.campo.append(mais_linha)
 
-    def adiciona_peça(self):
-        peça = Peca(self)
-        self.peças.append(peça)
+    def adiciona_peca(self):
+        # queremos que a peca comece a cair de cima e no centro do tabuleiro
+        # portanto no eixo x, queremos 4 e no y 0
+        self.peca = Peca(4, 0) # posição que a peça aparece no tabuleiro
 
-    def update(self):
-        pass
+    # função que faz a peça rodar (mudar a posição em torno dela mesma) a partir das coordenadas matriciais
+    def rodar(self):
+        roda = self.peca.giro
+        self.peca.girar()
+        if self.colisao(self.peca.y, self.peca.x):
+            self.peca.giro = roda
+    
+    # a função deslocamento, abaixo, mexe a peça para a esquerda e para a direita. no loop é possível determinar as teclas
+    # que regem esse movimento. ela também verifica a colisão com as paredes 
+    def deslocamento(self, dx):
+        pos_anterior = self.peca.x
+        self.peca.x += dx
+        if self.colisao(self.peca.y, self.peca.x):
+            self.peca.x = pos_anterior
+    
+    # como ver se uma peça bate na outra? precisamos trabalhar em função das matrizes, já que não sao imagens reais
+    # mas só consideramos as coordenadas preenchidas para colidir as peças. caso contrário todas seriam peças 4x4
+    def colisao(self, ay, ax):
+        matriz = 4
+        self.peca.y = ay
+        self.peca.x = ax
+        colide = False
+        for i in range(matriz):
+            for e in range(matriz):
+                if (i * matriz + e) in self.peca.imagem():
+                    if (i + ay > self.altura - 1) or (e + ax > self.largura - 1) or (e + ax < 0) or (self.campo[i + ay][e + ax] > 0):
+                        colide = True
+        return colide
 
+    # a função abaixo verifica se houve colisão das peças e, uma vez que houve, usa outras funções para determinar se ainda 
+    # tem espaço para criar novas peças. Se não tiver, é a situação em que o jogo acaba e o jogador perde. 
+    # Já aproveitamos então para definir a situação de fim de jogo quando isso acontece.
+    # com isso, no loop a gente consegue criar as frases indicando que o jogo acabou e impedimos a criação de mais peças.
+    def colidiu(self, matriz):
+        for i in range(matriz):
+            for e in range(matriz):
+                if (i * matriz + e) in self.peca.imagem():
+                    (self.campo[i + self.peca.y][e + self.peca.x]) = self.peca.cor
+        self.pontua()
+        self.adiciona_peca()
+        if self.colisao(self.peca.y, self.peca.x):
+            self.state = "fim de jogo"
 
+    # verificamos, na função abaixo, a quebra de linhas. no jogo Tetris original, quando uma linha inteira é preenchida ela é apagada
+    # essa quebra de linhas é o que da pontos para o jogador. na nossa versão não poderia ser diferente 
+    def pontua(self):
+        linha = 0
+        for i in range(1, self.altura):
+            esp_vazio = 0
+            for k in range(self.largura):
+                if self.campo[i][k] == 0:
+                    esp_vazio += 1
+            if esp_vazio == 0:
+                linha += 1
+                for e in range(i, 1, -1):
+                    for k in range(self.largura):
+                        self.campo[e][k] = self.campo[e - 1][k]
+        self.pontos += linha ** 2
+    # os pontos obtidos por cada quebra de linha são referentes a quantidade de linhas quebradas por vez. se uma linha foi preenchida,
+    # o jogador ganha 1 ponto, mas se mais de uma linha por vez é preenchida, o ganho é exponencial. Assim, quebrando 2 linhas
+    # a pontuação sobe para 2 por linha, ou seja, 4 pontos. Com 3 linhas preenchidas ao mesmo tempo, cada linha vale 3 e, potanto, o 
+    # jogador pontua 9 pontos de uma vez só.
 
-
-# todo: parar a peça no zero ou na colisão
-# nessa classe as peças do jogo são definidas com valores de posição estilo matriz. 
-# cada lista tem a lista principal com a posição padrão da peça seguido pelas variações de posição desse mesmo formato
-
-jogando = True
-clock  = pygame.time.Clock()
-FPS = 2
-pygame.display.set_caption('Tetris') # não necessariamente vai chamar assim, mas como é uma tentativa de replicar o tetris original vamos começar testando com esse nome
-all_sprites = pygame.sprite.Group()
-all_blocks = pygame.sprite.Group()
-tabuleiro = Tabuleiro(10,20)
-ultima_peca = Peca(tabuleiro, tela) 
-all_sprites.add(ultima_peca)
-while jogando: # formato do handout 
-    clock.tick(FPS)
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT: # clicar no x da tela para fechar o jogo
-            jogando = False
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_w:
-                ultima_peca.girar(1)
-            if event.key == pygame.K_s:
-                ultima_peca.girar(-1)
-            if event.key == pygame.K_a:
-                ultima_peca.deslocamento = -20
-            if event.key == pygame.K_d:
-                ultima_peca.deslocamento = +20
-        if event.type == pygame.KEYUP: # se não fizer isso vai ficar eternamente somando 1? 
-            if event.key == pygame.K_a:
-                ultima_peca.deslocamento = 0
-            if event.key == pygame.K_d:
-                ultima_peca.deslocamento = 0
-        
-    if not ultima_peca.caindo:
-        all_blocks.add(ultima_peca)
-        ultima_peca = Peca(tabuleiro, tela)
-        all_sprites.add(ultima_peca)
-        
-    all_sprites.update()
-    ultima_peca.rect.y += TAM_BLOCO
-  
-    hits = pygame.sprite.spritecollide(ultima_peca, all_blocks, False)
-    if len(hits) > 0:
-        print('colidiu')
-        ultima_peca.caindo = False
-    ultima_peca.rect.y -= TAM_BLOCO
-
-    tela.fill(CORES['azul'])
-    tela.blit(menu, (0,0))
-    all_sprites.draw(tela)
-    pygame.display.update()
+    # essa é a função que cria gravidade no jogo e faz a peça cair de quadradinho por quadradinho, sem meio termo.
+    # a ideia disso é imitar o jogo original, que tinha uma velocidade mais baixo e, portanto, não conseguia simular com precisão a 
+    # queda das peças. Além disso, a função cai ja aproveita para ver a colisão e verifica se as peças colidiram tanto com outras peças
+    # como com o tabuleiro e faz elas pararem de cair quando a colisão é identificada.
+    def cai(self):
+        matriz = 4
+        self.peca.y += 1
+        if self.colisao(self.peca.y, self.peca.x):
+            self.peca.y -= 1
+            self.colidiu(matriz)
