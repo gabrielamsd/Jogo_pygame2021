@@ -11,5 +11,7 @@ CORES ={
 'verdao': (156, 236, 91), #verde mais esculinho
 'rosinha': (232, 142, 237) #rosinha
 }
-TAM_BLOCO = 40
+# ter uma biblioteca para a geração de cores nos permite variar o estilo de cores para o jogo
+# caso queiramos mudar as cores das peças e dos textos na tela de jogo é mais simples simplesmente escolher 
+# uma cor no dicionário e colocá-la no jogo para não precisar buscar as cores diferentes
 

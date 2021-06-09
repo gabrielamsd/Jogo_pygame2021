@@ -1,7 +1,7 @@
 # importando as bibliotecas
 import pygame
 import random
-from tamanhocores import *
+from cores import *
 from pecas import *
 from estrutura import *
 # começando o jogo, determinando as dimensões e a tela do jogo
@@ -31,7 +31,7 @@ while jogando:
     pontos += 1
     if pontos > 999:
         pontos = 0
-    if pontos % (FPS // tabuleiro.level // 2) == 0: # vi um indiano no youtube fazendo isso numa réplica de mario. dessa forma o fps não modifica a velocidade de caimento das peças, só a velocidade de reação ao clique
+    if pontos % (FPS // tabuleiro.padrão // 2) == 0: # vi um indiano no youtube fazendo isso numa réplica de mario. dessa forma o fps não modifica a velocidade de caimento das peças, só a velocidade de reação ao clique
         if tabuleiro.state == "start": # funcionou, porém não entendi
             tabuleiro.cai()
 
@@ -89,7 +89,7 @@ while jogando:
 
     # escolhendo o que será escrito
     # frases como autoras do jogo, modo de jogar (quais peças apertar), pontuação e avisar quando a pessoa perder
-    titulo = tit.render('TETRIS', True, CORES['verde'])
+    titulo = tit.render('TETRIS', True, CORES['laranja'])
     texto1 = formato.render('Pontos: ' + str(tabuleiro.pontos), True, CORES['roxo'])
     texto2 = formato.render('Você perdeu!', True, CORES['rosa'])
     texto3 = subtexto.render('Jogo feito por Gabriela e Kailany', True, CORES['azul']) # devemos colocar sobrenomes?

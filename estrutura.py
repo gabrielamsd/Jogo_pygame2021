@@ -1,25 +1,46 @@
 import pygame
 import random
-from tamanhocores import *
+from cores import *
 from pecas import *
-class Tabuleiro:
-    level = 2
+# a classe tabuleiro não é apenas a geração de um espaço onde o jogo ativamente funciona dentro da tela, mas é onde a interação das peças 
+# é desenvolvida e criada. A colisão das peças entre sí e delas com o ambiente do tabuleiro, impedindo que elas passsem do chão ou das paredes
+# é gerada nessa classe, além das outras interações que o jogador pode fazer com o jogo, como deslocamento, giro e movimento das peças dentro 
+# do jogo.
+class Tabuleiro:  
+    # a pontuação se da pela quebra de linhas. quando uma linha é integralmente preenchida, ela é deletada e isso proporciona pontos ao jogador
+    # caso mais do que uma linha seja quebrada, os pontos aumentam exponencialmente. começamos no zero e ele vai ate 999, zerando no mil (valor definido
+    # no loop principal do jogo, junto com a contagem dos pontos) 
     pontos = 0
-    state = "start"
+    # state é usado no pygame para representar a situação do jogo. 'state', assim como 'start' ou 'gameover' são termos padronizados para isso, mas
+    # isso não limita a escolha de outras palavras para o mesmo uso. apenas preferimos deixar o padronizado para não confundirmos com outras coisas como a 
+    # tela de 'início' do jogo ou o 'começar' a jogar.
+    # enquanto o jogo estuver na situação 'start, ele está sendo jogado e só termina na situação 'gameover', onde escolhemos o termo 'fim de jogo', 
+    # determinada no loop principal do jogo com condições previstas na função 'colidiu()' desta classe (situação quando a peça gerada imediatamente colide, 
+    # impedindo a geração de outras peças, terminando o jogo com o jogador perdendo)
+    state = 'start'
+    # o campo do jogo é um espaço do tabuleiro onde o jogo de fato acontece (colisões, movimentos, preenchimento e destruição das linhas etc.)
     campo = []
     # as matrizes criadoras dos elementos peça são 4x4. caso queiramos mudar o tamanho, podemos alterar diretamente aqui ao inves de usar 4 sempre
     matriz = 4 
+    # dimensões
     x = 50
     y = 60
+    # intervalo (cada quadradinho das peças possui 20 pixels. a grade, portanto, é composta por quadradinhos de 20x20 pixels, e o intervalo na movimentação 
+    # das peças é de 20 pixels para os lados) 
     amp = 20
     peca = None
+    # o padrão precisa ser um valor par. com ele o tempo de jogo não depende do fps e sim de uma velocidade determinada.
+    # teoricamente quanto maior o padrão, mais rápido as peças caem e mais difícil fica o jogo, por isso a função que desenvolvemos foi ajustada
+    # para manter a mesma velocidade sempre e escolhemos o 2 como padrão, pois já proporciona um jogo dinâmico, mas não muito rápido a ponto 
+    # de ficar dificil demais de jogar.
+    padrão = 2
 
     def __init__(self, altura, largura):
         self.altura = altura
         self.largura = largura
         self.campo = []
         self.pontos = 0
-        self.state = "start"
+        self.state = 'start'
         for i in range(altura):
             mais_linha = []
             for e in range(largura):
@@ -72,7 +93,7 @@ class Tabuleiro:
         self.pontua()
         self.adiciona_peca()
         if self.colisao(self.peca.y, self.peca.x):
-            self.state = "fim de jogo"
+            self.state = 'fim de jogo'
 
     # verificamos, na função abaixo, a quebra de linhas. no jogo Tetris original, quando uma linha inteira é preenchida ela é apagada
     # essa quebra de linhas é o que da pontos para o jogador. na nossa versão não poderia ser diferente 
