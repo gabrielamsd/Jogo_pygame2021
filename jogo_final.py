@@ -11,12 +11,13 @@ dimensão = (500, 600)
 tela = pygame.display.set_mode(dimensão)
 pygame.display.set_caption("Tetris")
 
+# tela de início
+# ecolhemos um design com o título do jogo em destaque e o resto meio borrado para remeter ao vintage do jogo original
 inicio_img = pygame.image.load(path.join('telainicio.png'))
 
 # enquanto estiver jogando, ele vai rodar no loop
-começo = True
 jogando = True 
-#preencher a tela com a tela inicial
+
 clock = pygame.time.Clock()
 FPS = 40
 matriz = 4
@@ -31,10 +32,12 @@ aa = tabuleiro.y
 deixa_cair = False
 tela_inicio = False
 
+# música do jogo original (perdão direito autorais)
 pygame.mixer.music.load((path.join('musica_tetris.mp3')))
 pygame.mixer.music.play(loops=-1)
 pygame.mixer.music.set_volume(0.2)
 
+#preencher a tela com a tela inicial
 while tela_inicio == False:
     for event in pygame.event.get():     
         if event.type == pygame.QUIT:
@@ -51,19 +54,22 @@ while tela_inicio == False:
 
 
 while jogando:
-    if tabuleiro.peca is None: # cria uma peça quando não existe nenhuma que não esteja ja colidida
+    # cria uma peça quando não existe nenhuma que não esteja ja colidida
+    if tabuleiro.peca is None: 
         tabuleiro.adiciona_peca()
     # administrando o placar:
+    # o placar começa no zero e vai até 999, na pontuação '1000' ele zera
     pontos += 1
     if pontos > 999:
         pontos = 0
-    if pontos % (FPS // tabuleiro.padrão // 2) == 0: # vi um indiano no youtube fazendo isso numa réplica de mario. dessa forma o fps não modifica a velocidade de caimento das peças, só a velocidade de reação ao clique
-        if tabuleiro.state == "start": # funcionou, porém não entendi
+    # garante que o tempo da peça caindo não mude com o fps e sim com um valor padrão determinado na biblioteca Tabuleiro
+    if pontos % (FPS // tabuleiro.padrão // 2) == 0: 
+        if tabuleiro.state == "start": 
             tabuleiro.cai()
+    # deixa a peça cair quando aperta para baixo
     if deixa_cair:
-        if tabuleiro.state == "start": # funcionou, porém não entendi
+        if tabuleiro.state == "start": 
             tabuleiro.cai()
-
 
     #colore a tela (a cor é opcional, mas preto é a que ficou esteticamente mais bonita)
     tela.fill(CORES['preto']) 
@@ -77,7 +83,7 @@ while jogando:
                 tabuleiro.rodar()
             if event.key == pygame.K_s:
                 deixa_cair = True
-            if event.key == pygame.K_UP:
+            if event.key == pygame.K_UP: # e com as setas do teclado
                 tabuleiro.rodar()
             if event.key == pygame.K_DOWN:
                 deixa_cair = True
@@ -89,7 +95,7 @@ while jogando:
                 tabuleiro.deslocamento(-1)
             if event.key == pygame.K_RIGHT:
                 tabuleiro.deslocamento(1)
-        if event.type == pygame.KEYUP:
+        if event.type == pygame.KEYUP: # faz parar de cair para não afetar as outras peças
             if event.key == pygame.K_s:
                 deixa_cair = False
             if event.key == pygame.K_DOWN:
@@ -134,7 +140,8 @@ while jogando:
     titulo = tit.render('TETRIS', True, CORES['laranja'])
     texto1 = formato.render('Pontos: ' + str(tabuleiro.pontos), True, CORES['roxo'])
     texto2 = formato.render('Gameover!', True, CORES['rosa'])
-    texto3 = subtexto.render('Jogo feito por Gabriela Duarte e Kailany Kellen', True, CORES['azul']) # devemos colocar sobrenomes?
+    texto3 = subtexto.render('Jogo feito por Gabriela Duarte e Kailany Kellen', True, CORES['azul']) 
+    # textos de instrução na tela de jogo
     textoi1 = subtexto1.render('Para mover a peça', True, CORES['rosinha'])
     textoi2 = subtexto1.render('lateralmente aperte', True, CORES['rosinha'])
     textoi3 = subtexto1.render('A e D ou ← e →', True, CORES['rosinha'])
