@@ -66,7 +66,7 @@ while jogando:
     if pontos % (FPS // tabuleiro.padrão // 2) == 0: 
         if tabuleiro.state == "start": 
             tabuleiro.cai()
-    # deixa a peça cair quando aperta para baixo
+    # deixa a peça cair quando aperta para baixo para deixar o jogo mais dinâmico
     if deixa_cair:
         if tabuleiro.state == "start": 
             tabuleiro.cai()
