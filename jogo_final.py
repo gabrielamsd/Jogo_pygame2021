@@ -137,17 +137,17 @@ while jogando:
 
     # escolhendo o que será escrito
     # frases como autoras do jogo, modo de jogar (quais peças apertar), pontuação e avisar quando a pessoa perder
-    titulo = tit.render('TETRIS', True, CORES['laranja'])
-    texto1 = formato.render('Pontos: ' + str(tabuleiro.pontos), True, CORES['roxo'])
+    titulo = tit.render('TETRIS', True, CORES['branco'])
+    texto1 = formato.render('Pontos: ' + str(tabuleiro.pontos), True, CORES['branco'])
     texto2 = formato.render('Gameover!', True, CORES['rosa'])
-    texto3 = subtexto.render('Jogo feito por Gabriela Duarte e Kailany Kellen', True, CORES['azul']) 
+    texto3 = subtexto.render('Jogo feito por Gabriela Duarte e Kailany Kellen', True, CORES['branco']) 
     # textos de instrução na tela de jogo
-    textoi1 = subtexto1.render('Para mover a peça', True, CORES['rosinha'])
-    textoi2 = subtexto1.render('lateralmente aperte', True, CORES['rosinha'])
-    textoi3 = subtexto1.render('A e D ou ← e →', True, CORES['rosinha'])
-    textoi4 = subtexto1.render('Para girar use as', True, CORES['rosinha'])
-    textoi5 = subtexto1.render('teclas W ou ↑ ', True, CORES['rosinha'])
-    textoi6 = subtexto1.render('Dica: S e ↓ aceleram a queda', True, CORES['rosinha'])
+    textoi1 = subtexto1.render('Para mover a peça', True, CORES['branco'])
+    textoi2 = subtexto1.render('lateralmente aperte', True, CORES['branco'])
+    textoi3 = subtexto1.render('A e D ou ← e →', True, CORES['branco'])
+    textoi4 = subtexto1.render('Para girar use as', True, CORES['branco'])
+    textoi5 = subtexto1.render('teclas W ou ↑ ', True, CORES['branco'])
+    textoi6 = subtexto1.render('Dica: S e ↓ aceleram a queda', True, CORES['branco'])
     
 
     # escrevendo na tela
